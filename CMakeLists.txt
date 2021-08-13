@@ -9,7 +9,6 @@ enable_language(Fortran)
 # options
 option(MPI "Build with MPI" ON)
 option(python "Build PyPolyChord package" ON)
-option(python_user_install "Install Python package for user (--user)" ON)
 
 # enforce matching of the CXX and Fortran compilers
 if (NOT "${CMAKE_Fortran_COMPILER_ID}" MATCHES "${CMAKE_CXX_COMPILER_ID}")
@@ -30,7 +29,7 @@ if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
 elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
     message("Using GNU compilers")
 
-    set(CMAKE_Fortran_FLAGS "-ffree-line-length-none -cpp -fPIC -fno-stack-arrays -Ofast")
+    set(CMAKE_Fortran_FLAGS "-ffree-line-length-none -cpp -fPIC -fno-stack-arrays -O0")
     set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC -Ofast")
 
     # for GitHub actions MacOS -- debug only
@@ -136,10 +135,5 @@ if (python)
     # installation with setup.py
     get_filename_component(setup_path ${SETUP_PY} DIRECTORY)
     install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${setup_path})")
-#    if (python_user_install)
-#        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install)")
-#    else (python_user_install)
-#        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install --user)")
-#    endif (python_user_install)
 
 endif (python)
