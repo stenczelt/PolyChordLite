@@ -11,7 +11,7 @@ Used template variables:
 import os
 import shutil
 import sys
-from distutils.core import setup
+from setuptools import setup
 
 from setuptools import Extension
 from setuptools.command.build_ext import build_ext
