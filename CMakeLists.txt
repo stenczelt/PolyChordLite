@@ -134,10 +134,12 @@ if (python)
     add_custom_target(target ALL DEPENDS ${OUTPUT})
 
     # installation with setup.py
-    if (python_user_install)
-        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install)")
-    else (python_user_install)
-        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install --user)")
-    endif (python_user_install)
+    get_filename_component(setup_path ${SETUP_PY} DIRECTORY)
+    install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${setup_path})")
+#    if (python_user_install)
+#        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install)")
+#    else (python_user_install)
+#        install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${SETUP_PY} install --user)")
+#    endif (python_user_install)
 
 endif (python)
