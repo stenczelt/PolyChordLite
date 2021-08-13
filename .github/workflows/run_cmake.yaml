@@ -31,10 +31,10 @@ jobs:
           python --version
 
       - name: Test pypolychord
-        run: python run_pypolychord.py
+        run: /usr/bin/python3.8 run_pypolychord.py
 
       - name: Test pypolychord (MPI)
-        run: mpirun -np 2 python run_pypolychord.py
+        run: mpirun -np 2 /usr/bin/python3.8 run_pypolychord.py
 
 #  build-Intel:
 #    runs-on: ubuntu-latest
