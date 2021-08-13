@@ -7,49 +7,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-GNU:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gfortran libopenmpi-dev cmake
-          pip install scipy matplotlib getdist anesthetic mpi4py
-
-      - name: Run CMake
-        run: cmake -B build
-
-      - name: Build
-        run: make -C build install
-
-      - name: Test pypolychord
-        run: /usr/bin/python3.8 run_pypolychord.py
-
-      - name: Test pypolychord (MPI)
-        run: mpirun -np 2 /usr/bin/python3.8 run_pypolychord.py
-
-  build-Intel:
-    runs-on: ubuntu-latest
-    container:
-      image: intel/oneapi-hpckit
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run CMake
-        run: cmake -B build -DCMAKE_Fortran_COMPILER=ifort -DCMAKE_CXX_COMPILER=icpc
-
-      - name: Build
-        run: make -C build install
-
-      - name: Test pypolychord
-        run: python run_pypolychord.py
-
-      - name: Test pypolychord (MPI)
-        run: mpirun -np 2 python run_pypolychord.py
+#  build-GNU:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - name: Install dependencies
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install gfortran libopenmpi-dev cmake
+#          pip install scipy matplotlib getdist anesthetic mpi4py
+#
+#      - name: Run CMake
+#        run: cmake -B build
+#
+#      - name: Build
+#        run: make -C build install
+#
+#      - name: Test pypolychord
+#        run: /usr/bin/python3.8 run_pypolychord.py
+#
+#      - name: Test pypolychord (MPI)
+#        run: mpirun -np 2 /usr/bin/python3.8 run_pypolychord.py
+#
+#  build-Intel:
+#    runs-on: ubuntu-latest
+#    container:
+#      image: intel/oneapi-hpckit
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - name: Run CMake
+#        run: cmake -B build -DCMAKE_Fortran_COMPILER=ifort -DCMAKE_CXX_COMPILER=icpc
+#
+#      - name: Build
+#        run: make -C build install
+#
+#      - name: Test pypolychord
+#        run: python run_pypolychord.py
+#
+#      - name: Test pypolychord (MPI)
+#        run: mpirun -np 2 python run_pypolychord.py
 
   build-MacOS:
     runs-on: macos-latest
@@ -61,6 +61,17 @@ jobs:
         run: |
           brew install cmake gcc openmpi
           pip3 install numpy scipy matplotlib getdist anesthetic ipython mpi4py
+
+      - name: test python version
+        run: |
+          which python
+          which python3
+          which pip
+          which pip3
+          python --version
+          python3 --version
+          pip --version
+          pip3 --version
 
       # make sure the compiler is from the same vendor here, this is not the default
       - name: Run CMake
