@@ -16,8 +16,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install gfortran libopenmpi-dev cmake python3-dev pip
-          pip install scipy matplotlib getdist anesthetic ipython mpi4py
+          sudo apt-get install gfortran libopenmpi-dev cmake
+          pip install scipy matplotlib getdist anesthetic mpi4py
 
       - name: Run CMake
         run: cmake -B build
