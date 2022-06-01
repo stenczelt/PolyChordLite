@@ -22,6 +22,13 @@ def readme():
         return f.read()
 
 
+def get_version(short=False):
+    with open('${CMAKE_CURRENT_SOURCE_DIR}/src/polychord/feedback.f90') as f:
+        for line in f:
+            if 'version' in line:
+                return line[44:50]
+
+
 class MyBuildExtension(build_ext):
     """This class 'builds' the extension module, by
     copying it from the place where CMake placed it.
@@ -71,7 +78,7 @@ setup(name='pypolychord',
       ],
 
       # Don't touch anything below here - CMake fills this in
-      version='${PACKAGE_VERSION}',
+      version=get_version(),
       package_dir={'pypolychord': '${CMAKE_CURRENT_SOURCE_DIR}/pypolychord'},
       packages=['pypolychord'],
       cmdclass={'build_ext': MyBuildExtension},
