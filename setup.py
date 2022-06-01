@@ -12,6 +12,10 @@ import os, sys, subprocess, shutil
 
 import numpy
 
+if "darwin" == sys.platform:
+    os.system("mkdir build; cd build; cmake ..; make; pip install .")
+    exit()
+
 def check_compiler(default_CC="gcc"):
     """Checks what compiler is being used (clang, intel, or gcc)."""
 
