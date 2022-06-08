@@ -68,7 +68,7 @@ class CMakeExtension(Extension):
     def __init__(self, name):
         super().__init__(name, sources=[])
 
-class cmake_build_ext(build_ext):
+class CMakeBuildExt(build_ext):
     def run(self):
         for ext in self.extensions:
             self.build_cmake(ext)
@@ -162,7 +162,7 @@ pypolychord_module = Extension(
 
 if sys.platform == "darwin":
     ext_modules = [CMakeExtension("_pypolychord")]
-    cmdclass = {"build_ext": cmake_build_ext}
+    cmdclass = {"build_ext": CMakeBuildExt}
 else:
     ext_modules = [pypolychord_module]
     cmdclass={"build_py": CustomBuildPy,
