@@ -7,10 +7,12 @@ Polychord is a tool to solve high dimensional problems.
 from setuptools import setup, Extension, find_packages, Distribution
 from setuptools.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
+from setuptools.command.build_ext import build_ext
 
-import os, sys, subprocess, shutil
+import os, sys, subprocess, shutil, pathlib
 
 import numpy
+
 
 def check_compiler(default_CC="gcc"):
     """Checks what compiler is being used (clang, intel, or gcc)."""
@@ -62,6 +64,42 @@ def get_version(short=False):
             if 'version' in line:
                 return line[44:50]
 
+class CMakeExtension(Extension):
+    def __init__(self, name):
+        super().__init__(name, sources=[])
+
+class CMakeBuildExt(build_ext):
+    def run(self):
+        for ext in self.extensions:
+            self.build_cmake(ext)
+        super().run()
+    
+    def build_extension(self, ext) -> None:
+        """
+        This now "builds" the extension module, by
+        copying it from the place where CMake placed it.
+        """
+        # _pypolychord.ARCH.so
+        cwd = pathlib.Path().absolute()
+        builddir = pathlib.Path(self.build_temp)
+        extpath = pathlib.Path(self.get_ext_fullpath(ext.name))
+        
+        if os.path.exists(str(cwd/builddir)):
+            shutil.copyfile(cwd/builddir/extpath.name, self.get_ext_fullpath(ext.name))
+        elif sys.argv[2] == "install":
+            # let's warn here, though this should not happen with the current CMake setup
+            print("NOT FOUND: " + cwd/extpath + "\nYour installation may be incomplete.")
+    
+    def build_cmake(self, ext):
+        print(self.build_temp)
+        cwd = pathlib.Path().absolute()
+        build_temp = pathlib.Path(self.build_temp)
+        build_temp.mkdir(parents=True, exist_ok=True)
+
+        os.chdir(str(build_temp))
+        self.spawn(["cmake", str(cwd), f"-DPython3_EXECUTABLE={sys.executable}"])
+        self.spawn(["make"])
+        os.chdir(cwd)
 
 class DistributionWithOption(Distribution, object):
     def __init__(self, *args, **kwargs):
@@ -122,20 +160,27 @@ pypolychord_module = Extension(
         sources=['pypolychord/_pypolychord.cpp']
         )
 
+if sys.platform == "darwin":
+    ext_modules = [CMakeExtension("_pypolychord")]
+    cmdclass = {"build_ext": CMakeBuildExt}
+else:
+    ext_modules = [pypolychord_module]
+    cmdclass={"build_py": CustomBuildPy,
+    "clean": CustomClean}
+
 setup(name=NAME,
-      version=get_version(),
-      description='Python interface to PolyChord ' + get_version(),
-      url='https://ccpforge.cse.rl.ac.uk/gf/project/polychord/',
-      author='Will Handley',
-      author_email='wh260@cam.ac.uk',
-      license='PolyChord',
-      packages=find_packages(),
-      install_requires=['numpy','scipy'],
-      extras_require={'plotting': 'getdist'},
-      distclass=DistributionWithOption,
-      ext_modules=[pypolychord_module],
-      cmdclass={'build_py' : CustomBuildPy,
-                'clean' : CustomClean},
-      package_data={"" : ["lib/libchord.so"]},
-      include_package_data=True,
-      zip_safe=False)
+    version=get_version(),
+    description='Python interface to PolyChord ' + get_version(),
+    url='https://ccpforge.cse.rl.ac.uk/gf/project/polychord/',
+    author='Will Handley',
+    author_email='wh260@cam.ac.uk',
+    license='PolyChord',
+    packages=find_packages(),
+    install_requires=['numpy','scipy'],
+    extras_require={'plotting': 'getdist'},
+    distclass=DistributionWithOption,
+    ext_modules=ext_modules,
+    cmdclass=cmdclass,
+    package_data={"" : ["lib/libchord.so"]},
+    include_package_data=True,
+    zip_safe=False)

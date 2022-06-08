@@ -117,9 +117,6 @@ if (python)
     # The simple python module
     #################################################################
 
-    # hack ofr version
-    set(PACKAGE_VERSION "1.18.2")
-
     set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup_cmake_template.py")
     set(SETUP_PY "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
     set(DEPS "${CMAKE_CURRENT_SOURCE_DIR}/pypolychord/__init__.py")
