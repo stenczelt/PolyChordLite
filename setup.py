@@ -161,39 +161,26 @@ pypolychord_module = Extension(
         )
 
 if sys.platform == "darwin":
-    setup(name=NAME,
-        version=get_version(),
-        description='Python interface to PolyChord ' + get_version(),
-        url='https://ccpforge.cse.rl.ac.uk/gf/project/polychord/',
-        author='Will Handley',
-        author_email='wh260@cam.ac.uk',
-        license='PolyChord',
-        packages=find_packages(),
-        install_requires=['numpy','scipy'],
-        extras_require={'plotting': 'getdist'},
-        distclass=DistributionWithOption,
-        ext_modules=[CMakeExtension("_pypolychord")],
-
-        cmdclass={"build_ext": cmake_build_ext},
-        
-        package_data={"" : ["lib/libchord.so"]},
-        include_package_data=True,
-        zip_safe=False)
+    ext_modules = [CMakeExtension("_pypolychord")]
+    cmdclass = {"build_ext": cmake_build_ext}
 else:
-    setup(name=NAME,
-        version=get_version(),
-        description='Python interface to PolyChord ' + get_version(),
-        url='https://ccpforge.cse.rl.ac.uk/gf/project/polychord/',
-        author='Will Handley',
-        author_email='wh260@cam.ac.uk',
-        license='PolyChord',
-        packages=find_packages(),
-        install_requires=['numpy','scipy'],
-        extras_require={'plotting': 'getdist'},
-        distclass=DistributionWithOption,
-        ext_modules=[pypolychord_module],
-        cmdclass={'build_py' : CustomBuildPy,
-                        'clean' : CustomClean},   
-        package_data={"" : ["lib/libchord.so"]},
-        include_package_data=True,
-        zip_safe=False)
+    ext_modules = [pypolychord_module]
+    cmdclass={"build_py": CustomBuildPy,
+    "clean": CustomClean}
+
+setup(name=NAME,
+    version=get_version(),
+    description='Python interface to PolyChord ' + get_version(),
+    url='https://ccpforge.cse.rl.ac.uk/gf/project/polychord/',
+    author='Will Handley',
+    author_email='wh260@cam.ac.uk',
+    license='PolyChord',
+    packages=find_packages(),
+    install_requires=['numpy','scipy'],
+    extras_require={'plotting': 'getdist'},
+    distclass=DistributionWithOption,
+    ext_modules=ext_modules,
+    cmdclass=cmdclass,
+    package_data={"" : ["lib/libchord.so"]},
+    include_package_data=True,
+    zip_safe=False)
